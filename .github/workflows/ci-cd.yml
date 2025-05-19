@@ -1,0 +1,42 @@
+name: ML Image Detector CI/CD
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v2
+
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                    python-version: '3.12'
+            
+            - name: Install dependencies
+              run: |
+                    pip install -r requirements.txt
+                
+            - name: Docker build
+              run: |
+                    docker build -t image-detector .
+                
+            - name: Docker Run & Check
+              run: | 
+                    docker run -d -p 5000:5000 --name test-container image-detector
+                    sleep 10
+
+            - name: Download Sample Image
+              run: | 
+                    mkdir -p data
+                    curl -o data/sample.jpg https://raw.githubusercontent.com/keras-team/keras/main/docs/img/keras-logo-small.jpg
+           
+            - name: Run Tests
+              run: |
+                    python test_app.py
+            - name: Cleanup
+              run: docker rm -f test-container
