@@ -14,7 +14,9 @@ def predict():
 
     image = request.files["image"]
     img_arr = preprocess_image(image)
-    pred = model.predict(np.expand_dims(img_arr, axis=1))[0][0]
+    pred = model.predict(np.expand_dims(img_arr, axis=0))[0][0]
     label = "airplane" if pred < 0.5 else "automobile"
     return jsonify({"prediction": label})
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
