@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
-from app.utils import preprocess_image
+from utils import preprocess_image
 import numpy as np
 
 app = Flask(__name__)
