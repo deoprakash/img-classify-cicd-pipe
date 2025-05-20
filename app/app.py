@@ -4,7 +4,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
-model = load_model("model.h5")
+model = load_model("app/model.h5")
 
 @app.route('/')
 def index():
@@ -15,9 +15,9 @@ def predict():
     try:
         image = request.files['image']
         img_arr = preprocess_image(image)
-        result = model.predict(np.array([img_arr]))[0]
-        prediction = str(np.argmax(result))
-        return render_template('index.html', prediction=prediction)
+        pred = model.predict(np.expand_dims(img_arr, axis=0))[0][0]
+        label = "airplane" if pred < 0.5 else "automobile"
+        return render_template('index.html', prediction=label)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
